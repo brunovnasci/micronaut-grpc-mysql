@@ -9,15 +9,18 @@ package com.demo;
 
 service PersonService {
   rpc create (PersonRequest) returns (PersonReply) {}
+  rpc findById (PersonRequest) returns (PersonReply) {}
 }
 
 message PersonRequest {
-  string nome = 1;
-  string idade = 2;
+  string nome = 2;
+  string idade = 3;
+  uint64 id = 4;
 }
 
 message PersonReply {
   uint64 id = 1;
   string nome = 2;
   string idade = 3;
+
 }
