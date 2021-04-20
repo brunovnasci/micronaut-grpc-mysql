@@ -32,7 +32,6 @@ dependencies {
 
 
     runtime("io.micronaut.sql:micronaut-jdbc-hikari")
-    runtime("com.h2database:h2")
 
     implementation("javax.annotation:javax.annotation-api")
 
