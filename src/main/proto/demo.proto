@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.demo";
+option java_outer_classname = "Person";
+option objc_class_prefix = "HLW";
+
+package com.demo;
+
+service PersonService {
+  rpc create (PersonRequest) returns (PersonReply) {}
+}
+
+message PersonRequest {
+  string nome = 1;
+  string idade = 2;
+}
+
+message PersonReply {
+  uint64 id = 1;
+  string nome = 2;
+  string idade = 3;
+}
