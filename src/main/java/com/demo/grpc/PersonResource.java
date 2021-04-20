@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @RequiredArgsConstructor
-public class PersonEndpoint extends PersonServiceGrpc.PersonServiceImplBase {
+public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
 
     private final CreatePersonUseCase createPersonUseCase;
 
