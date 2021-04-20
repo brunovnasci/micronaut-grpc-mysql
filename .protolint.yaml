@@ -1,0 +1,9 @@
+lint:
+  rules:
+    no_default: true
+
+    add:
+      - MESSAGE_NAMES_UPPER_CAMEL_CASE
+      - SERVICE_NAMES_UPPER_CAMEL_CASE
+      - PACKAGE_NAME_LOWER_CASE
+      - PROTO3_FIELDS_AVOID_REQUIRED
