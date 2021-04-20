@@ -2,7 +2,6 @@ package com.demo.gateway.mysql;
 
 import com.demo.domain.Person;
 import com.demo.gateway.FindPersonGateway;
-import com.demo.gateway.mysql.exceptions.ObjectNotFoundException;
 import com.demo.gateway.mysql.model.PersonDatabase;
 import lombok.RequiredArgsConstructor;
 

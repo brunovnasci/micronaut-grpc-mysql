@@ -10,6 +10,7 @@ package com.demo;
 service PersonService {
   rpc create (PersonRequest) returns (PersonReply) {}
   rpc findById (PersonRequest) returns (PersonReply) {}
+  rpc update (PersonRequest) returns (PersonReply) {}
 }
 
 message PersonRequest {
