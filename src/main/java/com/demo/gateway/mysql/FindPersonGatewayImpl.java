@@ -17,13 +17,14 @@ public class FindPersonGatewayImpl implements FindPersonGateway {
     private final PersonRepository personRepository;
 
     @Override
-    public Person findById(Long id){
-        Optional<PersonDatabase> obj = personRepository.findById(id);
+    public Optional<Person> findById(Long id) {
+        Optional<PersonDatabase> personDatabase = personRepository.findById(id);
 
-        return Person.builder()
-                .id(obj.get().getId())
-                .idade(obj.get().getIdade())
-                .nome(obj.get().getNome()).build();
+        return personDatabase.map(database -> Person.builder()
+                .id(database.getId())
+                .idade(database.getIdade())
+                .nome(database.getNome()).build());
+
     }
 
 }

@@ -2,7 +2,9 @@ package com.demo.gateway;
 
 import com.demo.domain.Person;
 
+import java.util.Optional;
+
 public interface FindPersonGateway {
 
-    Person findById(Long id);
+    Optional<Person> findById(Long id);
 }
