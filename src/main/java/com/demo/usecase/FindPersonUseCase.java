@@ -15,4 +15,5 @@ public class FindPersonUseCase {
     public Person findById(long id) {
         return findPersonGateway.findById(id);
     }
+
 }

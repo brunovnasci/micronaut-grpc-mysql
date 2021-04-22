@@ -10,12 +10,17 @@ package com.demo;
 service PersonService {
   rpc create (CreatePersonRequest) returns (PersonReply) {}
   rpc findById (FindPersonRequest) returns (PersonReply) {}
+  rpc deleteById (FindPersonRequest) returns (DeletePersonRequest) {}
   rpc update (UpdatePersonRequest) returns (PersonReply) {}
 }
 
 message CreatePersonRequest {
   string nome = 1;
   string idade = 2;
+}
+message DeletePersonRequest{
+  uint64 id = 1;
+  string message = 2;
 }
 
 message FindPersonRequest {
