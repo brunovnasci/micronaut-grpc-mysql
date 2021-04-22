@@ -10,6 +10,7 @@ package com.demo;
 service PersonService {
   rpc create (CreatePersonRequest) returns (PersonReply) {}
   rpc findById (FindPersonRequest) returns (PersonReply) {}
+  rpc update (UpdatePersonRequest) returns (PersonReply) {}
 }
 
 message CreatePersonRequest {
@@ -21,9 +22,14 @@ message FindPersonRequest {
   uint64 id = 1;
 }
 
+message UpdatePersonRequest {
+  uint64 id = 1;
+  string nome = 2 ;
+  string idade = 3;
+}
+
 message PersonReply {
   uint64 id = 1;
   string nome = 2;
   string idade = 3;
-
 }

@@ -1,8 +1,7 @@
 package com.demo.gateway.mysql;
 
 import com.demo.domain.Person;
-import com.demo.gateway.FindPersonGateway;
-import com.demo.gateway.mysql.exceptions.ObjectNotFoundException;
+import com.demo.gateway.UpdatePersonGateway;
 import com.demo.gateway.mysql.model.PersonDatabase;
 import lombok.RequiredArgsConstructor;
 
@@ -11,20 +10,23 @@ import javax.inject.Singleton;
 
 @Singleton
 @RequiredArgsConstructor
-public class FindPersonGatewayImpl implements FindPersonGateway {
+public class UpdatePersonGatewayImpl implements UpdatePersonGateway {
 
     @Inject
     private final PersonRepository personRepository;
 
     @Override
-    public Person findById(Long id) {
-        PersonDatabase personDatabase = personRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("[GATEWAY] Person with id - " + id + " not found"));
+    public Person update(Person person) {
+        PersonDatabase personDatabase = personRepository.update(PersonDatabase.builder()
+                .id(person.getId())
+                .nome(person.getNome())
+                .idade(person.getIdade())
+                .build());
 
         return Person.builder()
                 .id(personDatabase.getId())
                 .idade(personDatabase.getIdade())
-                .nome(personDatabase.getNome()).build();
+                .nome(personDatabase.getNome())
+                .build();
     }
-
 }
