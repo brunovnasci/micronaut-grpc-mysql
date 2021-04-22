@@ -4,6 +4,7 @@ import com.demo.*;
 import com.demo.domain.Person;
 import com.demo.grpc.exceptions.RequiredFieldException;
 import com.demo.usecase.CreatePersonUseCase;
+import com.demo.usecase.DeletePersonUseCase;
 import com.demo.usecase.FindPersonUseCase;
 import com.demo.usecase.UpdatePersonUseCase;
 import io.grpc.stub.StreamObserver;
@@ -18,6 +19,7 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     private final CreatePersonUseCase createPersonUseCase;
     private final FindPersonUseCase findPersonUseCase;
     private final UpdatePersonUseCase updatePersonUseCase;
+    private final DeletePersonUseCase deletePersonUseCase;
 
     @Override
     public void create(CreatePersonRequest request, StreamObserver<PersonReply> responseObserver) {
@@ -42,6 +44,22 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
                 .setId(person.getId())
                 .setNome(person.getNome())
                 .setIdade(person.getIdade())
+                .build());
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deleteById(FindPersonRequest request, StreamObserver<DeletePersonRequest> responseObserver) {
+        if (request.getId() == 0) {
+            throw new RequiredFieldException("Person id must be provided");
+        }
+
+        deletePersonUseCase.deleteById(request.getId());
+
+        responseObserver.onNext(DeletePersonRequest.newBuilder()
+                .setId(request.getId())
+                .setMessage("User " + request.getId() + " Deleted")
                 .build());
 
         responseObserver.onCompleted();
