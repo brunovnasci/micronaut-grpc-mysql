@@ -3,14 +3,14 @@ package com.demo.grpc;
 import com.demo.*;
 import com.demo.domain.Person;
 import com.demo.grpc.exceptions.RequiredFieldException;
-import com.demo.usecase.CreatePersonUseCase;
-import com.demo.usecase.DeletePersonUseCase;
-import com.demo.usecase.FindPersonUseCase;
-import com.demo.usecase.UpdatePersonUseCase;
+import com.demo.usecase.*;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 @RequiredArgsConstructor
@@ -20,6 +20,7 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     private final FindPersonUseCase findPersonUseCase;
     private final UpdatePersonUseCase updatePersonUseCase;
     private final DeletePersonUseCase deletePersonUseCase;
+    private final FindAllPersonUseCase findAllPersonUseCase;
 
     @Override
     public void create(CreatePersonRequest request, StreamObserver<PersonReply> responseObserver) {
@@ -45,6 +46,26 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
                 .setNome(person.getNome())
                 .setIdade(person.getIdade())
                 .build());
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void findAll(FindPersonRequest request, StreamObserver<FindAllPersonReply> responseObserver) {
+        List<Person> personList = findAllPersonUseCase.findAll();
+
+        List<PersonReply> personReplyList = new ArrayList<>();
+
+        for (Person x : personList) {
+            personReplyList.add(PersonReply.newBuilder()
+                    .setId(x.getId())
+                    .setNome(x.getNome())
+                    .setIdade(x.getIdade())
+                    .build());
+        }
+
+        responseObserver.onNext(FindAllPersonReply.newBuilder().build());
+
 
         responseObserver.onCompleted();
     }

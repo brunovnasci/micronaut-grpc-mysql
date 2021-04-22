@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "com.demo";
-option java_outer_classname = "Person";
+option java_outer_classname = "PersonProto";
 option objc_class_prefix = "HLW";
 
 package com.demo;
@@ -12,6 +12,7 @@ service PersonService {
   rpc findById (FindPersonRequest) returns (PersonReply) {}
   rpc deleteById (FindPersonRequest) returns (DeletePersonRequest) {}
   rpc update (UpdatePersonRequest) returns (PersonReply) {}
+  rpc findAll (FindPersonRequest) returns (FindAllPersonReply) {}
 }
 
 message CreatePersonRequest {
@@ -21,6 +22,10 @@ message CreatePersonRequest {
 message DeletePersonRequest{
   uint64 id = 1;
   string message = 2;
+}
+
+message FindAllPersonReply{
+  repeated PersonReply personList = 1;
 }
 
 message FindPersonRequest {
