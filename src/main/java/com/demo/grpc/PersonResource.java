@@ -51,13 +51,18 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
 
     @Override
     public void deleteById(FindPersonRequest request, StreamObserver<DeletePersonRequest> responseObserver) {
-       deletePersonUseCase.deleteById(request.getId());
+        if (request.getId() == 0) {
+            throw new RequiredFieldException("Person id must be provided");
+        }
 
-       responseObserver.onNext(DeletePersonRequest.newBuilder()
-                .setMessage("User "+request.getId()+" Deleted")
+        deletePersonUseCase.deleteById(request.getId());
+
+        responseObserver.onNext(DeletePersonRequest.newBuilder()
+                .setId(request.getId())
+                .setMessage("User " + request.getId() + " Deleted")
                 .build());
 
-       responseObserver.onCompleted();
+        responseObserver.onCompleted();
     }
 
     @Override
