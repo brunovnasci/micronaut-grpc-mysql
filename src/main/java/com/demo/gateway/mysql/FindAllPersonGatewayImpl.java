@@ -1,6 +1,7 @@
 package com.demo.gateway.mysql;
 
 import com.demo.domain.Person;
+import com.demo.gateway.FindAllPersonGateway;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -11,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 @Singleton
-public class FindAllPersonGatewayImpl {
+public class FindAllPersonGatewayImpl implements FindAllPersonGateway {
 
     @Inject
     private final PersonRepository personRepository;
