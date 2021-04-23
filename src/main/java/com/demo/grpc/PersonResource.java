@@ -3,14 +3,12 @@ package com.demo.grpc;
 import com.demo.*;
 import com.demo.domain.Person;
 import com.demo.grpc.exceptions.RequiredFieldException;
-import com.demo.usecase.CreatePersonUseCase;
-import com.demo.usecase.DeletePersonUseCase;
-import com.demo.usecase.FindPersonUseCase;
-import com.demo.usecase.UpdatePersonUseCase;
+import com.demo.usecase.*;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 @RequiredArgsConstructor
@@ -20,6 +18,7 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     private final FindPersonUseCase findPersonUseCase;
     private final UpdatePersonUseCase updatePersonUseCase;
     private final DeletePersonUseCase deletePersonUseCase;
+    private final FindAllPersonUseCase findAllPersonUseCase;
 
     @Override
     public void create(CreatePersonRequest request, StreamObserver<PersonReply> responseObserver) {
@@ -37,7 +36,7 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     }
 
     @Override
-    public void findById(FindPersonRequest request, StreamObserver<PersonReply> responseObserver) {
+    public void findById(FindPersonByIdRequest request, StreamObserver<PersonReply> responseObserver) {
         Person person = findPersonUseCase.findById(request.getId());
 
         responseObserver.onNext(PersonReply.newBuilder()
@@ -50,14 +49,32 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     }
 
     @Override
-    public void deleteById(FindPersonRequest request, StreamObserver<DeletePersonRequest> responseObserver) {
+    public void findAll(Empty request, StreamObserver<FindAllPersonReply> responseObserver) {
+        List<Person> personList = findAllPersonUseCase.findAll();
+
+        FindAllPersonReply.Builder builder = FindAllPersonReply.newBuilder();
+
+        personList.forEach(person ->
+                builder.addPersonList(PersonReply.newBuilder()
+                        .setId(person.getId())
+                        .setIdade(person.getIdade())
+                        .setNome(person.getNome()))
+        );
+
+        responseObserver.onNext(builder.build());
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deleteById(DeletePersonByIdRequest request, StreamObserver<DeletePersonReply> responseObserver) {
         if (request.getId() == 0) {
             throw new RequiredFieldException("Person id must be provided");
         }
 
         deletePersonUseCase.deleteById(request.getId());
 
-        responseObserver.onNext(DeletePersonRequest.newBuilder()
+        responseObserver.onNext(DeletePersonReply.newBuilder()
                 .setId(request.getId())
                 .setMessage("User " + request.getId() + " Deleted")
                 .build());
@@ -66,7 +83,7 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
     }
 
     @Override
-    public void update(UpdatePersonRequest request, StreamObserver<PersonReply> responseObserver) {
+    public void updateById(UpdatePersonByIdRequest request, StreamObserver<PersonReply> responseObserver) {
         if (request.getId() == 0) {
             throw new RequiredFieldException("Person id must be provided");
         }
