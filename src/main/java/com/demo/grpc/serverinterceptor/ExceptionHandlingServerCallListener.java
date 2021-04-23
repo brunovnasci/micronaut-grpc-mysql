@@ -1,21 +1,24 @@
 package com.demo.grpc.serverinterceptor;
 
-import com.demo.gateway.mysql.exceptions.ObjectNotFoundException;
-import com.demo.grpc.exceptions.RequiredFieldException;
+import com.demo.grpc.serverinterceptor.handlers.ExceptionHandler;
+import com.demo.grpc.serverinterceptor.handlers.GenericExceptionHandler;
 import io.grpc.ForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
-import io.grpc.Status;
+
+import java.util.List;
 
 class ExceptionHandlingServerCallListener<I, O> extends ForwardingServerCallListener.SimpleForwardingServerCallListener<I> {
 
     private final ServerCall<I, O> serverCall;
     private final Metadata metadata;
+    private final List<ExceptionHandler> exceptionHandler;
 
-    ExceptionHandlingServerCallListener(ServerCall.Listener<I> listener, ServerCall<I, O> serverCall, Metadata metadata) {
+    ExceptionHandlingServerCallListener(ServerCall.Listener<I> listener, ServerCall<I, O> serverCall, Metadata metadata, List<ExceptionHandler> exceptionHandler) {
         super(listener);
         this.serverCall = serverCall;
         this.metadata = metadata;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -23,7 +26,7 @@ class ExceptionHandlingServerCallListener<I, O> extends ForwardingServerCallList
         try {
             super.onHalfClose();
         } catch (Exception ex) {
-            handleException(ex, serverCall, metadata);
+            handleExceptionFactory(ex, serverCall, metadata);
             throw ex;
         }
     }
@@ -33,18 +36,18 @@ class ExceptionHandlingServerCallListener<I, O> extends ForwardingServerCallList
         try {
             super.onReady();
         } catch (Exception ex) {
-            handleException(ex, serverCall, metadata);
+            handleExceptionFactory(ex, serverCall, metadata);
             throw ex;
         }
     }
 
-    private void handleException(Exception exception, ServerCall<I, O> serverCall, Metadata metadata) {
-        if (exception instanceof ObjectNotFoundException) {
-            serverCall.close(Status.NOT_FOUND.withDescription("Person not found"), metadata);
-        } else if (exception instanceof RequiredFieldException) {
-            serverCall.close(Status.INVALID_ARGUMENT.withDescription(exception.getMessage()), metadata);
-        } else {
-            serverCall.close(Status.INTERNAL, metadata);
+    private void handleExceptionFactory(Exception exception, ServerCall<I, O> serverCall, Metadata metadata) {
+        for (ExceptionHandler handler : exceptionHandler) {
+            if (handler.supports(exception)) {
+                handler.handle(exception, serverCall, metadata);
+                return;
+            }
         }
+        new GenericExceptionHandler().handle(exception, serverCall, metadata);
     }
 }
