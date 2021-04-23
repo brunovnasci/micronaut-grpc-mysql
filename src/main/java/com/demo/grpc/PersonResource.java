@@ -37,6 +37,10 @@ public class PersonResource extends PersonServiceGrpc.PersonServiceImplBase {
 
     @Override
     public void findById(FindPersonByIdRequest request, StreamObserver<PersonReply> responseObserver) {
+        if (request.getId() == 0) {
+            throw new RequiredFieldException("Person id must be provided");
+        }
+
         Person person = findPersonUseCase.findById(request.getId());
 
         responseObserver.onNext(PersonReply.newBuilder()
